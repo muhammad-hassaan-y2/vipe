@@ -15,18 +15,16 @@ datasource db {
 }
 
 model Project {
-  id        String @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  
-messages Message[]    
+
+  messages Message[]
 }
 
-
 enum MessageRole {
-  USER 
+  USER
   ASSISTANT
 }
 
@@ -36,27 +34,27 @@ enum MessageType {
 }
 
 model Message {
-  id String @id @default(uuid())
-  content String
-  role MessageRole
-  type MessageType
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String      @id @default(uuid())
+  content   String
+  role      MessageRole
+  type      MessageType
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  fragment Fragement?
+  fragment Fragment?
 }
 
-model Fragement {
-  id String @id @default(uuid())
-  messageId String @unique
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+model Fragment {
+  id        String  @id @default(uuid())
+  messageId String  @unique
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
   sandboxUrl String
-  title String
-  files Json
+  title      String
+  files      Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
