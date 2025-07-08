@@ -5,6 +5,16 @@ CREATE TYPE "MessageRole" AS ENUM ('USER', 'ASSISTANT');
 CREATE TYPE "MessageType" AS ENUM ('RESULT', 'ERROR');
 
 -- CreateTable
+CREATE TABLE "Project" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Message" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
@@ -12,12 +22,13 @@ CREATE TABLE "Message" (
     "type" "MessageType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "projectId" TEXT NOT NULL,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Fragement" (
+CREATE TABLE "Fragment" (
     "id" TEXT NOT NULL,
     "messageId" TEXT NOT NULL,
     "sandboxUrl" TEXT NOT NULL,
@@ -26,11 +37,14 @@ CREATE TABLE "Fragement" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Fragement_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Fragment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Fragement_messageId_key" ON "Fragement"("messageId");
+CREATE UNIQUE INDEX "Fragment_messageId_key" ON "Fragment"("messageId");
 
 -- AddForeignKey
-ALTER TABLE "Fragement" ADD CONSTRAINT "Fragement_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "Message"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Fragment" ADD CONSTRAINT "Fragment_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "Message"("id") ON DELETE CASCADE ON UPDATE CASCADE;
