@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { PROJECT_TEMPLATES } from "../../constants";
+import { useClerk } from "@clerk/nextjs";
 
 const formSchema = z.object({
   value: z
@@ -23,6 +24,7 @@ const formSchema = z.object({
 export const ProjectForm = () => {
   const router = useRouter();
   const trpc = useTRPC();
+  const clerk = useClerk();
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,6 +43,9 @@ export const ProjectForm = () => {
       },
       onError: (error) => {
         toast.error(error.message);
+        if (error.data?.code === "UNAUTHORIZED") {
+          clerk.openSignIn();
+        }
       },
     })
   );
@@ -52,9 +57,9 @@ export const ProjectForm = () => {
 
   const onSelect = (value: string) => {
     form.setValue("value", value, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
     });
   };
 
@@ -123,7 +128,7 @@ export const ProjectForm = () => {
               key={template.title}
               variant="outline"
               size="sm"
-              className="🟨 bg-white dark:bg-sidebar"
+              className="bg-white dark:bg-sidebar"
               onClick={() => onSelect(template.prompt)}
             >
               {template.emoji} {template.title}
