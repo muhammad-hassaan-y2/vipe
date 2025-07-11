@@ -25,7 +25,6 @@ interface TreeViewProps {
   onSelect?: (value: string) => void;
 }
 
-/* eslint-disable no-unused-vars */
 
 export const TreeView = ({ data, value, onSelect }: TreeViewProps) => {
   return (
@@ -35,13 +34,20 @@ export const TreeView = ({ data, value, onSelect }: TreeViewProps) => {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-
-
+                {data.map((item, idx) => (
+                  <Tree
+                    key={idx}
+                    item={item}
+                    selectedValue={value}
+                    onSelect={onSelect}
+                    parentPath=""
+                  />
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarRail/>
+        <SidebarRail />
       </Sidebar>
     </SidebarProvider>
   );
