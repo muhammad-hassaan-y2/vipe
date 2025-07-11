@@ -14,7 +14,6 @@ import {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -103,6 +102,8 @@ export const FileExplorer = ({ files }: FileExplorerProps) => {
     return convertFilesToTreeItems(files);
   }, [files]);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
+
   const handleFileSelect = useCallback((filePath: string) => {
     if (files[filePath]) {
       setSelectedFile(filePath);
@@ -140,7 +141,7 @@ export const FileExplorer = ({ files }: FileExplorerProps) => {
                   onClick={handleCopy}
                   disabled={copied}
                 >
-                  {copied ? <CopyCheckIcon/> : <CopyIcon />}
+                  {copied ? <CopyCheckIcon /> : <CopyIcon />}
                 </Button>
               </Hint>
             </div>

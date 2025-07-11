@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Sandbox } from "@e2b/code-interpreter";
 import {
   openai,
@@ -9,7 +10,6 @@ import {
   createState,
 } from "@inngest/agent-kit";
 import { inngest } from "./client";
-import { stepsSchemas } from "inngest/api/schema";
 import {
   getSandbox,
   lastAssistantTextMessageContent,
@@ -20,10 +20,12 @@ import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import { prisma } from "@/lib/db";
 import { SANDBOX_TIMEOUT } from "./types";
 
+
 interface AgentState {
   summary: string;
   files: { [path: string]: string };
 }
+
 
 export const codeAgentFunction = inngest.createFunction(
   { id: "code-agent" },

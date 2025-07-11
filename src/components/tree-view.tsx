@@ -25,6 +25,8 @@ interface TreeViewProps {
   onSelect?: (value: string) => void;
 }
 
+/* eslint-disable no-unused-vars */
+
 export const TreeView = ({ data, value, onSelect }: TreeViewProps) => {
   return (
     <SidebarProvider>

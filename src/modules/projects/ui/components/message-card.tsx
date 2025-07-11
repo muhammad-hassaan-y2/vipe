@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Fragment, MessageRole, MessageType } from "@/generated/prisma";
 import { cn } from "@/lib/utils";
-import { Assistant } from "next/font/google";
 import { format } from "date-fns";
 import Image from "next/image";
 import { ChevronsRightIcon, Code2Icon } from "lucide-react";
