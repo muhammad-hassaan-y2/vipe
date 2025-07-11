@@ -4,41 +4,46 @@ import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import z from "zod";
 import { generateSlug } from "random-word-slugs";
 import { TRPCError } from "@trpc/server";
+import { consumeCredits } from "@/lib/usage";
 
 export const projectsRouter = createTRPCRouter({
   getOne: protectedProcedure
-  
-  .input(z.object({
-    id: z.string().min(1, { message: "ID is required" }),
-  }))
-  
-  .query(async ({ input, ctx }) => {
-    const existingProjects = await prisma.project.findUnique({
-      where: {
-        id: input.id,
-        userId: ctx.auth.userId,
-      },
-    });
 
-    if (!existingProjects) {
-      throw new TRPCError({code: "NOT_FOUND", message: "Project not found"  });
-    }
+    .input(
+      z.object({
+        id: z.string().min(1, { message: "ID is required" }),
+      })
+    )
 
-    return existingProjects;
-  }),
-
-  getMany: protectedProcedure
-    .query(async ({ ctx }) => {
-      const projects = await prisma.project.findMany({
+    .query(async ({ input, ctx }) => {
+      const existingProjects = await prisma.project.findUnique({
         where: {
+          id: input.id,
           userId: ctx.auth.userId,
         },
-        orderBy: {
-          updatedAt: "desc",
-        },
       });
-      return projects;
+
+      if (!existingProjects) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      return existingProjects;
     }),
+
+  getMany: protectedProcedure.query(async ({ ctx }) => {
+    const projects = await prisma.project.findMany({
+      where: {
+        userId: ctx.auth.userId,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+    return projects;
+  }),
 
   create: protectedProcedure
     .input(
@@ -50,6 +55,23 @@ export const projectsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+
+      try {
+        await consumeCredits();
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Something went wrong",
+          });
+        } else {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "You have run out of credits",
+          });
+        }
+      }
+
       const createdProject = await prisma.project.create({
         data: {
           userId: ctx.auth.userId,
